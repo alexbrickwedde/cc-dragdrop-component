@@ -22,14 +22,34 @@ class CcDragDrop extends HTMLElement {
   dragOver(e) {
     e.preventDefault();
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, type : "over", over : (this.entercount > 0)}}));
+
+    var left = e.offsetX;
+    var top = e.offsetY;
+    var related = e.srcElement;
+    while(related && related.parentNode && related != this && related.parentNode != this) {
+      left += related.offsetLeft;
+      top += related.offsetTop;
+      related = related.parentNode;
+    }
+
+    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, type : "over", pos : {left, top}, over : (this.entercount > 0)}}));
   }
 
   dragEnter(e) {
     e.preventDefault();
     e.stopPropagation();
     this.entercount++;
-    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, type : "enter", over : (this.entercount > 0)}}));
+
+    var left = e.offsetX;
+    var top = e.offsetY;
+    var related = e.srcElement;
+    while(related && related.parentNode && related != this && related.parentNode != this) {
+      left += related.offsetLeft;
+      top += related.offsetTop;
+      related = related.parentNode;
+    }
+
+    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, type : "enter", pos : {left, top}, over : (this.entercount > 0)}}));
   }
   
   dragLeave(e) {
@@ -42,12 +62,31 @@ class CcDragDrop extends HTMLElement {
   dropped(e) {
     e.preventDefault();
     e.stopPropagation();
+
+    var left = e.offsetX;
+    var top = e.offsetY;
+    var related = e.srcElement;
+    while(related && related.parentNode && related != this && related.parentNode != this) {
+      left += related.offsetLeft;
+      top += related.offsetTop;
+      related = related.parentNode;
+    }
+
     this.entercount = 0;
-    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, type : "drop"}}));
+    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, pos : {left, top}, type : "drop"}}));
   }
 
   dragStart(e) {
-    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, type : "dragstart"}}));
+    var left = e.offsetX;
+    var top = e.offsetY;
+    var related = e.srcElement;
+    while(related && related.parentNode && related != this && related.parentNode != this) {
+      left += related.offsetLeft;
+      top += related.offsetTop;
+      related = related.parentNode;
+    }
+
+    this.dispatchEvent(new CustomEvent("dragdrop", { detail : {dragdrop : this, event : e, pos : {left, top}, type : "dragstart"}}));
   }
 
   dragEnd(e) {
